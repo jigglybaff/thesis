@@ -140,6 +140,8 @@ int main()
                 //thelw na trexw ola ta jobs na parw ta cost ana agent a1 kai a2
                 int localCapacityA1 = capacityPerAgent[a1];
                 int localCapacityA2 = capacityPerAgent[a2];
+                initialAssignment[j1] = a2 + 1;
+                initialAssignment[j2] = a1 + 1;
                 for (j = 0; j < m; j++)
                 {
                     if (getAgentPerformingJob(initialAssignment, n, j) == a1)
@@ -175,9 +177,12 @@ int main()
                 }
                 if (localSearchCost < starCost)
                 {
-                    initialAssignment[a1] = j2 + 1;
-                    initialAssignment[a2] = j1 + 1;
+                    initialAssignment[j1] = a2 + 1;
+                    initialAssignment[j2] = a1 + 1;
                     starCost = localSearchCost;
+                } else {
+                    initialAssignment[j2] = a2 + 1;
+                    initialAssignment[j1] = a1 + 1;
                 }
             }
         }
@@ -243,6 +248,8 @@ int main()
                     //thelw na trexw ola ta jobs na parw ta cost ana agent a1 kai a2
                     int localCapacityA1 = capacityPerAgent[a1];
                     int localCapacityA2 = capacityPerAgent[a2];
+                    perturbedAssignment[j1] = a2 + 1;
+                    perturbedAssignment[j2] = a1 + 1;
                     for (j = 0; j < m; j++)
                     {
                         if (getAgentPerformingJob(perturbedAssignment, n, j) == a1)
@@ -278,9 +285,12 @@ int main()
                     }
                     if (localSearchCost < costOfPerturbed)
                     {
-                        perturbedAssignment[a1] = j2 + 1;
-                        perturbedAssignment[a2] = j1 + 1;
+                        perturbedAssignment[j1] = a2 + 1;
+                        perturbedAssignment[j2] = a1 + 1;
                         costOfPerturbed = localSearchCost;
+                    } else {
+                        perturbedAssignment[j1] = a1 + 1;
+                        perturbedAssignment[j2] = a2 + 1;
                     }
                 }
             }
