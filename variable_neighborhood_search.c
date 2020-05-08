@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define penalty 100
-
 int main(){
 
     FILE *myFile;
@@ -61,6 +59,7 @@ int main(){
         int costForSecondChance;
         //initial solve problem
         //make each job be performed by the cheapest agent that has enough free resources
+        int penalty = 1;
         for (j = 0; j < m; j++)
         {
             int bestCost = 1000;
@@ -338,8 +337,8 @@ int main(){
                     }
                 }
             }
-            printf("star cost: %d\n", starCost);
-            printf("changed cost: %d\n", changedAssignmentCost);
+            // printf("star cost: %d\n", starCost);
+            // printf("changed cost: %d\n", changedAssignmentCost);
             if (changedAssignmentCost < starCost) {
                 starCost = changedAssignmentCost;
                 for (i = 0; i < m; i++) {
