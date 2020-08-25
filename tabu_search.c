@@ -11,7 +11,7 @@ int main(){
     srand(time(NULL));
 
     FILE *myFile;
-    myFile = fopen("data/gap12.txt", "r"); //open txt file to read
+    myFile = fopen("data/gap1.txt", "r"); //open txt file to read
 
     if (myFile == NULL){
         printf("Error Reading File\n"); //handle reading file error
