@@ -3,10 +3,8 @@
 #include <time.h>
 #include <math.h>
 
-#define N_ITERATIONS 10000
+#define N_ITERATIONS 1000
 #define penalty 100
-
-int getAgentPerformingJob(int assignment[], int n, int job);
 
 int main(){
 
@@ -100,186 +98,61 @@ int main(){
         for (i = 0; i < m; i++) {
             initialAssignment[i] = assignment[i];
         }
-        //PRINT INITIAL 
-        // printf("\nINITIAL\n");
-        // printf("\ncost: %d\n", cost);
-        // printf("assignment: ");
-        // for (i = 0; i < m; i++) {
-        //     printf("%d ", assignment[i]);
-        // }
-        // printf("\n");
-        int iter;
-        // for (iter = 0; iter < N_ITERATIONS; iter++) {
-        //     //create a new perturbed solution
-        //     int perturbedAssignment[m];
-        //     for (i = 0; i < m; i++) {
-        //         perturbedAssignment[i] = assignment[i];
-        //     }
-        //     int perturbedFreeResources[n];
-        //     for (i = 0; i < n; i++) {
-        //         perturbedFreeResources[i] = capacityPerAgent[i];
-        //     }
-        //     int costOfPerturbed = 0;
-        //     int agentsToChange = (rand() % n) + 1; 
-        //     while (agentsToChange > 0) {
-        //         int agent = (rand() % n) + 1;
-        //         int job = rand() % m;
-        //         perturbedAssignment[job] = agent;
-        //         agentsToChange -= 1;
-        //     }
-        //     //calculate cost of perturbated solution
-        //     for (j = 0; j < m; j++) {
-        //         i = perturbedAssignment[j]-1;
-        //         if (perturbedFreeResources[i] >= resources[i][j]) {
-        //             perturbedFreeResources[i] -= resources[i][j];
-        //             costOfPerturbed += costs[i][j];
-        //         } else {
-        //             costOfPerturbed += costs[i][j] + abs(perturbedFreeResources[i] - resources[i][j]) * penalty;
-        //         }
-        //     }
-        //     //acceptance criterion
-        //     if (costOfPerturbed < cost) {
-        //         cost = costOfPerturbed;
-        //         for (i = 0; i < m; i++) {
-        //             assignment[i] = perturbedAssignment[i];
-        //         }
-        //     } else {
-        //         double p = exp((- costOfPerturbed + cost) / T);
-        //         if ((double) rand() / (RAND_MAX) < p) {
-        //             cost = costOfPerturbed;
-        //             for (i = 0; i < m; i++) {
-        //                 assignment[i] = perturbedAssignment[i];
-        //             }
-        //         }
-        //     }
-            
-        //     if (cost < starCost) {
-        //         starCost = cost;
-        //         for (i = 0; i < m; i++) {
-        //             initialAssignment[i] = assignment[i];
-        //         }
-        //     }
-        //     if ((iter + 1) % N_ITER_UPDATE_TEMPERATURE == 0) {
-        //         T *= alpha;
-        //     }
-        // }
-        
-        starCost = cost;///////////////////////////////////////////////////////////////////////////////////////////////////////
+        starCost = cost;
         initialAssignment[m];
         for (i = 0; i < m; i++)
         {
             initialAssignment[i] = assignment[i];
         }
-
-        iter = 0;
-
-        for (int j1 = 0; j1 < m; j1++)
+        int iter = 0;
+        do //find a better solution (cost)
         {
-            for (int j2 = 0; j2 < m; j2++)
-            {
-                int localSearchCost = 0; //local search
-                int localCostPerAgent[n];
+            int costOfChanged;
+            int changedCostPerAgent[n];
+            int changedAssignment[m];
+            int changedFreeResources[n];
+            do {
                 for (i = 0; i < n; i++)
                 {
-                    localCostPerAgent[i] = costPerAgent[i];
+                    changedCostPerAgent[i] = 0;
                 }
-                int a1 = getAgentPerformingJob(initialAssignment, n, j1);
-                int a2 = getAgentPerformingJob(initialAssignment, n, j2);
-                localCostPerAgent[a1] = 0;
-                localCostPerAgent[a2] = 0;
-                //thelw na trexw ola ta jobs na parw ta cost ana agent a1 kai a2
-                int localCapacityA1 = capacityPerAgent[a1];
-                int localCapacityA2 = capacityPerAgent[a2];
-                initialAssignment[j1] = a2 + 1;
-                initialAssignment[j2] = a1 + 1;
+                
+                for (i = 0; i < m; i++)
+                {
+                    changedAssignment[i] = initialAssignment[i];
+                }
+                
+                for (i = 0; i < n; i++)
+                {
+                    changedFreeResources[i] = capacityPerAgent[i];
+                }
+                costOfChanged = 0;
+                int agentsToChange = (rand() % n) + 1;
+                while (agentsToChange > 0)
+                {
+                    int agent = (rand() % n) + 1;
+                    int job = rand() % m;
+                    changedAssignment[job] = agent;
+                    agentsToChange -= 1;
+                }
                 for (j = 0; j < m; j++)
                 {
-                    if (getAgentPerformingJob(initialAssignment, n, j) == a1)
+                    i = changedAssignment[j] - 1;
+                    if (changedFreeResources[i] >= resources[i][j])
                     {
-                        if (localCapacityA1 >= resources[a1][j])
-                        {
-                            localCapacityA1 -= resources[a1][j];
-                            localCostPerAgent[a1] += costs[a1][j];
-                        }
-                        else
-                        {
-                            localCostPerAgent[a1] += costs[a1][j] + abs(localCapacityA1 - resources[a1][j]) * penalty;
-                            localCapacityA1 = 0;
-                        }
+                        changedFreeResources[i] -= resources[i][j];
+                        costOfChanged += costs[i][j];
+                        changedCostPerAgent[i] += costOfChanged;
                     }
-                    else if (getAgentPerformingJob(initialAssignment, n, j) == a2)
+                    else
                     {
-                        if (localCapacityA2 >= resources[a2][j])
-                        {
-                            localCapacityA2 -= resources[a2][j];
-                            localCostPerAgent[a2] += costs[a2][j];
-                        }
-                        else
-                        {
-                            localCostPerAgent[a2] += costs[a2][j] + abs(localCapacityA2 - resources[a2][j]) * penalty;
-                            localCapacityA2 = 0;
-                        }
+                        costOfChanged += costs[i][j] + abs(changedFreeResources[i] - resources[i][j]) * penalty;
+                        changedFreeResources[i] = 0;
+                        changedCostPerAgent[i] += costOfChanged;
                     }
                 }
-                for (i = 0; i < n; i++)
-                {
-                    localSearchCost += localCostPerAgent[i];
-                }
-                if (localSearchCost < starCost)
-                {
-                    initialAssignment[j1] = a2 + 1;
-                    initialAssignment[j2] = a1 + 1;
-                    starCost = localSearchCost;
-                } else {
-                    initialAssignment[j2] = a2 + 1;
-                    initialAssignment[j1] = a1 + 1;
-                }
-            }
-        }///////////////////////////////
-        do
-        {
-            //create a new perturbed solution
-            int perturbedCostPerAgent[n];
-            for (i = 0; i < n; i++)
-            {
-                perturbedCostPerAgent[i] = 0;
-            }
-            int perturbedAssignment[m];
-            for (i = 0; i < m; i++)
-            {
-                perturbedAssignment[i] = initialAssignment[i];
-            }
-            int perturbedFreeResources[n];
-            for (i = 0; i < n; i++)
-            {
-                perturbedFreeResources[i] = capacityPerAgent[i];
-            }
-            int costOfPerturbed = 0;
-            int agentsToChange = (rand() % n) + 1;
-            while (agentsToChange > 0)
-            {
-                int agent = (rand() % n) + 1;
-                int job = rand() % m;
-                perturbedAssignment[job] = agent;
-                agentsToChange -= 1;
-            }
-            //calculate cost of perturbated solution
-            for (j = 0; j < m; j++)
-            {
-                i = perturbedAssignment[j] - 1;
-                if (perturbedFreeResources[i] >= resources[i][j])
-                {
-                    perturbedFreeResources[i] -= resources[i][j];
-                    costOfPerturbed += costs[i][j];
-                    perturbedCostPerAgent[i] += costOfPerturbed;
-                }
-                else
-                {
-                    costOfPerturbed += costs[i][j] + abs(perturbedFreeResources[i] - resources[i][j]) * penalty;
-                    perturbedFreeResources[i] = 0;
-                    perturbedCostPerAgent[i] += costOfPerturbed;
-                }
-            }
+            } while (costOfChanged > starCost);
+            
 
             for (int j1 = 0; j1 < m; j1++)
             {
@@ -289,20 +162,20 @@ int main(){
                     int localCostPerAgent[n];
                     for (i = 0; i < n; i++)
                     {
-                        localCostPerAgent[i] = perturbedCostPerAgent[i];
+                        localCostPerAgent[i] = changedCostPerAgent[i];
                     }
-                    int a1 = getAgentPerformingJob(perturbedAssignment, n, j1);
-                    int a2 = getAgentPerformingJob(perturbedAssignment, n, j2);
+                    int a1 = changedAssignment[j1] - 1;
+                    int a2 = changedAssignment[j2] - 1;
                     localCostPerAgent[a1] = 0;
                     localCostPerAgent[a2] = 0;
                     //thelw na trexw ola ta jobs na parw ta cost ana agent a1 kai a2
                     int localCapacityA1 = capacityPerAgent[a1];
                     int localCapacityA2 = capacityPerAgent[a2];
-                    perturbedAssignment[j1] = a2 + 1;
-                    perturbedAssignment[j2] = a1 + 1;
+                    changedAssignment[j1] = a2 + 1;
+                    changedAssignment[j2] = a1 + 1;
                     for (j = 0; j < m; j++)
                     {
-                        if (getAgentPerformingJob(perturbedAssignment, n, j) == a1)
+                        if ((changedAssignment[j] - 1) == a1)
                         {
                             if (localCapacityA1 >= resources[a1][j])
                             {
@@ -315,7 +188,7 @@ int main(){
                                 localCapacityA1 = 0;
                             }
                         }
-                        else if (getAgentPerformingJob(perturbedAssignment, n, j) == a2)
+                        else if ((changedAssignment[j] - 1) == a2)
                         {
                             if (localCapacityA2 >= resources[a2][j])
                             {
@@ -333,24 +206,24 @@ int main(){
                     {
                         localSearchCost += localCostPerAgent[i];
                     }
-                    if (localSearchCost < costOfPerturbed)
+                    if (localSearchCost < costOfChanged)
                     {
-                        perturbedAssignment[j1] = a2 + 1;
-                        perturbedAssignment[j2] = a1 + 1;
-                        costOfPerturbed = localSearchCost;
+                        changedAssignment[j1] = a2 + 1;
+                        changedAssignment[j2] = a1 + 1;
+                        costOfChanged = localSearchCost;
                     } else {
-                        perturbedAssignment[j1] = a1 + 1;
-                        perturbedAssignment[j2] = a2 + 1;
+                        changedAssignment[j1] = a1 + 1;
+                        changedAssignment[j2] = a2 + 1;
                     }
                 }
             }
-            cost = costOfPerturbed;
+            cost = costOfChanged;
             if (cost < starCost)
             {
                 starCost = cost;
                 for (i = 0; i < m; i++)
                 {
-                    initialAssignment[i] = perturbedAssignment[i];
+                    initialAssignment[i] = changedAssignment[i];
                 }
             }
             iter++;
@@ -367,9 +240,4 @@ int main(){
     fclose(myFile);
 
     return 0;
-}
-
-int getAgentPerformingJob(int assignment[], int n, int job)
-{
-    return (assignment[job] - 1);
 }
