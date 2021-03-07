@@ -3,18 +3,19 @@
 #include <time.h>
 #include <math.h>
 
-#define N_ITERATIONS 10000
+#define ITERATIONS 10000
 #define penalty 100
 
 int getAgentPerformingJob(int assignment[], int n, int job);
 
-int main()
+void iterated_local_search (char dataPath[], FILE *resultsFile)
 {
-
+    printf("ITERATED LOCAL SEARCH\n");
+    fprintf(resultsFile, "ITERATED LOCAL SEARCH\n");
     srand(time(NULL));
 
     FILE *myFile;
-    myFile = fopen("data/gap1.txt", "r"); //open txt file to read
+    myFile = fopen(dataPath, "r"); //open txt file to read
 
     if (myFile == NULL)
     {
@@ -56,6 +57,8 @@ int main()
         }
 
         //SOLVE
+        clock_t t; 
+        t = clock();
         int assignment[m];
         for (i = 0; i < m; i++)
         {
@@ -304,7 +307,9 @@ int main()
                 }
             }
             iter++;
-        } while (iter <= N_ITERATIONS);
+        } while (iter <= ITERATIONS);
+        t = clock() - t; 
+        double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds 
         printf("cost: %d\n", starCost);
         printf("assignment: ");
         for (i = 0; i < m; i++)
@@ -312,11 +317,18 @@ int main()
             printf("%d ", initialAssignment[i]);
         }
         printf("\n");
+        printf("time: %f\n", time_taken);
+        fprintf(resultsFile, "cost: %d\n", starCost);
+        fprintf(resultsFile, "assignment: ");
+        for (i = 0; i < m; i++)
+        {
+            fprintf(resultsFile, "%d ", initialAssignment[i]);
+        }
+        fprintf(resultsFile, "\n");
+        fprintf(resultsFile, "time: %f\n", time_taken);
     }
-
+    fprintf(resultsFile, "################################################\n");
     fclose(myFile);
-
-    return 0;
 }
 
 int getAgentPerformingJob(int assignment[], int n, int job)

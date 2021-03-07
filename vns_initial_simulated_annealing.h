@@ -1,10 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
-int main(){
+#define HALF_ITERATIONS 50000
+#define N_ITER_UPDATE_TEMPERATURE 1000
+#define alpha 0.9
+#define INITIAL_TEMPERATURE 1000
+#define vns_penalty 1000
+
+void vns_initial_simulated_annealing (char dataPath[], FILE *resultsFile) {
+    printf("VARIABLE NEIGHBORHOOD SEARCH\n");
+    fprintf(resultsFile, "VARIABLE NEIGHBORHOOD SEARCH\n");
+    srand(time(NULL));
+
     FILE *myFile;
-    myFile = fopen("data/gap1.txt", "r"); //open txt file to read
+    myFile = fopen(dataPath, "r"); //open txt file to read
 
     if (myFile == NULL){
         printf("Error Reading File\n"); //handle reading file error
@@ -36,15 +47,120 @@ int main(){
         int capacityPerAgent[m]; //resource capacity of agent i
         for (i = 0; i < n; i++) {
             fscanf(myFile, "%d ", &capacityPerAgent[i]);
-        }  
+        }     
+
         //SOLVE
+        clock_t t; 
+        t = clock();
+        float T = INITIAL_TEMPERATURE;
         int assignment[m];
-        for (i = 0; i < m; i++)
-        {
+        for (i = 0; i < m; i++) {
             assignment[i] = 0;
         }
         int cost = 0;
         int freeResources[n];
+        for (i = 0; i < n; i++) {
+            freeResources[i] = capacityPerAgent[i];
+        }
+        int costForSecondChance;
+        //initial solve problem
+        //make each job be performed by the cheapest agent that has enough free resources
+        for (j = 0; j < m; j++) {
+            int bestCost = 1000;
+            int costOfJob;
+            for (i = 0; i < n; i++) {
+                if (costs[i][j] < bestCost && freeResources[i] >= resources[i][j]) {
+                    bestCost = costs[i][j];
+                    assignment[j] = i + 1;
+                    freeResources[i] = freeResources[i] - resources[i][j];
+                    costOfJob = costs[i][j];
+                } else if (costs[i][j] < bestCost) {
+                    costForSecondChance = costs[i][j];
+                }
+            }
+            if (assignment[j] == 0) {  //ean den uparxei agent me arketa free resources, epilekse ton prwto me to mikrotero kostos
+                for (i = 0; i < n; i++) {
+                    if (costs[i][j] == costForSecondChance) {
+                        assignment[j] = i + 1;
+                        costOfJob = costs[i][j] + abs(freeResources[i] - resources[i][j]) * vns_penalty;
+                        freeResources[i] = 0;
+                    }
+                }
+            }
+            //upologismos cost
+            cost += costOfJob;
+        }
+        int starCost = cost;
+        int initialAssignment[m];
+        for (i = 0; i < m; i++) {
+            initialAssignment[i] = assignment[i];
+        }
+        int iter;
+        for (iter = 0; iter < HALF_ITERATIONS; iter++) {
+            //create a new perturbed solution
+            int perturbedAssignment[m];
+            for (i = 0; i < m; i++) {
+                perturbedAssignment[i] = assignment[i];
+            }
+            int perturbedFreeResources[n];
+            for (i = 0; i < n; i++) {
+                perturbedFreeResources[i] = capacityPerAgent[i];
+            }
+            int costOfPerturbed = 0;
+            int agentsToChange = (rand() % n) + 1; 
+            while (agentsToChange > 0) {
+                int agent = (rand() % n) + 1;
+                int job = rand() % m;
+                perturbedAssignment[job] = agent;
+                agentsToChange -= 1;
+            }
+            //calculate cost of perturbated solution
+            for (j = 0; j < m; j++) {
+                i = perturbedAssignment[j]-1;
+                if (perturbedFreeResources[i] >= resources[i][j]) {
+                    perturbedFreeResources[i] -= resources[i][j];
+                    costOfPerturbed += costs[i][j];
+                } else {
+                    costOfPerturbed += costs[i][j] + abs(perturbedFreeResources[i] - resources[i][j]) * vns_penalty;
+                }
+            }
+            //acceptance criterion
+            if (costOfPerturbed < cost) {
+                cost = costOfPerturbed;
+                for (i = 0; i < m; i++) {
+                    assignment[i] = perturbedAssignment[i];
+                }
+            } else {
+                double p = exp((- costOfPerturbed + cost) / T);
+                if ((double) rand() / (RAND_MAX) < p) {
+                    cost = costOfPerturbed;
+                    for (i = 0; i < m; i++) {
+                        assignment[i] = perturbedAssignment[i];
+                    }
+                }
+            }
+            
+            if (cost < starCost) {
+                starCost = cost;
+                for (i = 0; i < m; i++) {
+                    initialAssignment[i] = assignment[i];
+                }
+            }
+            if ((iter + 1) % N_ITER_UPDATE_TEMPERATURE == 0) {
+                T *= alpha;
+            }
+        }
+        // printf("SIMULATED ANNEALING INITIAL SOLUTION\n");
+        // printf("cost: %d\n", cost);
+        // printf("assignment: ");
+        // for (i = 0; i < m; i++) {
+        //     printf("%d ", assignment[i]);
+        // }
+        // printf("\n");
+        ////////////////////////VNS START
+        
+        int selectedAgent;
+        int costOfJob;
         for (i = 0; i < n; i++)
         {
             freeResources[i] = capacityPerAgent[i];
@@ -54,55 +170,24 @@ int main(){
         {
             costPerAgent[i] = 0;
         }
-        int costForSecondChance;
-        //initial solve problem
-        //make each job be performed by the cheapest agent that has enough free resources
-        int penalty = 100;
-        for (j = 0; j < m; j++)
-        {
-            int bestCost = 1000;
-            int costOfJob;
-            int selectedAgent;
-            for (i = 0; i < n; i++)
-            {
-                if (costs[i][j] < bestCost && freeResources[i] >= resources[i][j])
-                {
-                    bestCost = costs[i][j];
-                    assignment[j] = i + 1;
-                    freeResources[i] = freeResources[i] - resources[i][j];
-                    costOfJob = costs[i][j];
-                    selectedAgent = i;
-                }
-                else if (costs[i][j] < bestCost)
-                {
-                    costForSecondChance = costs[i][j];
-                }
+        for (i = 0; i < m; i++) {
+            initialAssignment[i] = assignment[i];
+        }
+        for (i = 0; i < m; i++) {
+            selectedAgent = initialAssignment[i] - 1;
+            if (freeResources[selectedAgent] >= resources[selectedAgent][i]) {
+                freeResources[selectedAgent] -= resources[selectedAgent][i];
+                costOfJob = costs[selectedAgent][i];
+            } else {
+                costOfJob = costs[selectedAgent][i] +  abs(freeResources[selectedAgent] - resources[selectedAgent][i]) * vns_penalty;
             }
-            if (assignment[j] == 0)
-            { //ean den uparxei agent me arketa free resources, epilekse ton prwto me to mikrotero kostos
-                for (i = 0; i < n; i++)
-                {
-                    if (costs[i][j] <= costForSecondChance)
-                    {
-                        assignment[j] = i + 1;
-                        costOfJob = costs[i][j] + abs(freeResources[i] - resources[i][j]) * penalty;
-                        freeResources[i] = 0;
-                        selectedAgent = i;
-                    }
-                }
-            }
-            //upologismos cost
             cost += costOfJob;
-            //upologismos cost per Agent
             costPerAgent[selectedAgent] += costOfJob;
         }
-
-        int starCost = cost;
-        
-        int initialAssignment[m];
+        starCost = cost;
         for (i = 0; i < m; i++)
         {
-            initialAssignment[i] = assignment[i];
+            assignment[i] = initialAssignment[i];
         }
         int maxK; //ean einai megalo problima meiwnei tis prakseis
         if (m > 200) {
@@ -135,7 +220,7 @@ int main(){
                                     resourcesOfA1 -= resources[a1][j];
                                     costToBeAdded += costs[a1][j];
                                 } else {
-                                    costToBeAdded += costs[a1][j] + abs(resourcesOfA1 - resources[a1][j]) * penalty;
+                                    costToBeAdded += costs[a1][j] + abs(resourcesOfA1 - resources[a1][j]) * vns_penalty;
                                     resourcesOfA1 = 0;
                                 }
                             }
@@ -144,12 +229,7 @@ int main(){
                         for (i = 0; i < n; i++) {
                             newChangedAssignmentCost += changedCostPerAgent[i];
                         }
-                        // printf("1cost: %d\n", costToBeAdded);
-                        // printf("cost: %d\n", costToBeRemoved);
-                        // printf("cost: %d\n", newChangedAssignmentCost);
                         newChangedAssignmentCost += costToBeAdded - costToBeRemoved;
-                        // printf("costtt: %d\n", cost);
-                        // printf("cost!: %d\n\n\n", newChangedAssignmentCost);
                         if (newChangedAssignmentCost < changedAssignmentCost) {
                             changedAssignmentCost = newChangedAssignmentCost;
                             changedCostPerAgent[a1] = costToBeAdded;
@@ -182,7 +262,7 @@ int main(){
                                     resourcesOfA1 -= resources[a1][j];
                                     costToBeAdded1 += costs[a1][j];
                                 } else {
-                                    costToBeAdded1 += costs[a1][j] + abs(resourcesOfA1 - resources[a1][j]) * penalty;
+                                    costToBeAdded1 += costs[a1][j] + abs(resourcesOfA1 - resources[a1][j]) * vns_penalty;
                                     resourcesOfA1 = 0;
                                 }
                             } else if (changedAssignment[j] == a2 + 1) {
@@ -190,7 +270,7 @@ int main(){
                                     resourcesOfA2 -= resources[a2][j];
                                     costToBeAdded2 += costs[a2][j];
                                 } else {
-                                    costToBeAdded2 += costs[a2][j] + abs(resourcesOfA2 - resources[a2][j]) * penalty;
+                                    costToBeAdded2 += costs[a2][j] + abs(resourcesOfA2 - resources[a2][j]) * vns_penalty;
                                     resourcesOfA2 = 0;
                                 }
                             }
@@ -201,13 +281,7 @@ int main(){
                                 newChangedAssignmentCost += changedCostPerAgent[i];
                             // }
                         }
-                        // printf("2cost: %d\n", costToBeAdded1);
-                        //         printf("cost: %d\n", costToBeAdded2);
-                        //         printf("cost: %d\n", costToBeRemoved);
-                        //         printf("cost: %d\n", newChangedAssignmentCost);
                         newChangedAssignmentCost += costToBeAdded1 + costToBeAdded2 - costToBeRemoved;
-                        // printf("costtt: %d\n", cost);
-                        // printf("cost!: %d\n\n\n", newChangedAssignmentCost);
                         if (newChangedAssignmentCost < changedAssignmentCost) {
                             changedAssignmentCost = newChangedAssignmentCost;
                                 changedCostPerAgent[a2] = costToBeAdded2;
@@ -244,7 +318,7 @@ int main(){
                                             resourcesOfA1 -= resources[a1][j];
                                             costToBeAdded1 += costs[a1][j];
                                         } else {
-                                            costToBeAdded1 += costs[a1][j] + abs(resourcesOfA1 - resources[a1][j]) * penalty;
+                                            costToBeAdded1 += costs[a1][j] + abs(resourcesOfA1 - resources[a1][j]) * vns_penalty;
                                             resourcesOfA1 = 0;
                                         }
                                     } else if (changedAssignment[j] == a2 +1) {
@@ -252,7 +326,7 @@ int main(){
                                             resourcesOfA2 -= resources[a2][j];
                                             costToBeAdded2 += costs[a2][j];
                                         } else {
-                                            costToBeAdded2 += costs[a2][j] + abs(resourcesOfA2 - resources[a2][j]) * penalty;
+                                            costToBeAdded2 += costs[a2][j] + abs(resourcesOfA2 - resources[a2][j]) * vns_penalty;
                                             resourcesOfA2 = 0;
                                         }
                                     }
@@ -263,13 +337,7 @@ int main(){
                                         newChangedAssignmentCost += changedCostPerAgent[i];
                                     // }
                                 }
-                                // printf("3cost: %d\n", costToBeAdded1);
-                                // printf("cost: %d\n", costToBeAdded2);
-                                // printf("cost: %d\n", costToBeRemoved);
-                                // printf("cost: %d\n", newChangedAssignmentCost);
                                 newChangedAssignmentCost += costToBeAdded1 + costToBeAdded2 - costToBeRemoved;
-                                // printf("costtt: %d\n", cost);
-                                // printf("cost!: %d\n\n\n", newChangedAssignmentCost);
                                 if (newChangedAssignmentCost < changedAssignmentCost) {
                                     changedAssignmentCost = newChangedAssignmentCost;
                                     changedCostPerAgent[a1] = costToBeAdded1;
@@ -321,7 +389,7 @@ int main(){
                                         resourcesOfA1 -= resources[a1][j];
                                         costToBeAdded1 += costs[a1][j];
                                     } else {
-                                        costToBeAdded1 += costs[a1][j] + abs(resourcesOfA1 - resources[a1][j]) * penalty;
+                                        costToBeAdded1 += costs[a1][j] + abs(resourcesOfA1 - resources[a1][j]) * vns_penalty;
                                         resourcesOfA1 = 0;
                                     }
                                 } else if (changedAssignment[j] == a2 + 1) {
@@ -329,7 +397,7 @@ int main(){
                                         resourcesOfA2 -= resources[a2][j];
                                         costToBeAdded2 += costs[a2][j];
                                     } else {
-                                        costToBeAdded2 += costs[a2][j] + abs(resourcesOfA2 - resources[a2][j]) * penalty;
+                                        costToBeAdded2 += costs[a2][j] + abs(resourcesOfA2 - resources[a2][j]) * vns_penalty;
                                         resourcesOfA2 = 0;
                                     }
                                 } else if (changedAssignment[j] == a3 + 1) {
@@ -337,7 +405,7 @@ int main(){
                                         resourcesOfA3 -= resources[a3][j];
                                         costToBeAdded3 += costs[a3][j];
                                     } else {
-                                        costToBeAdded3 += costs[a3][j] + abs(resourcesOfA3 - resources[a3][j]) * penalty;
+                                        costToBeAdded3 += costs[a3][j] + abs(resourcesOfA3 - resources[a3][j]) * vns_penalty;
                                         resourcesOfA3 = 0;
                                     }
                                 }
@@ -348,14 +416,7 @@ int main(){
                                     newChangedAssignmentCost += changedCostPerAgent[i];
                                 // }
                             }
-                            // printf("4cost: %d\n", costToBeAdded1);
-                            //     printf("cost: %d\n", costToBeAdded2);
-                            //     printf("cost: %d\n", costToBeAdded3);
-                            //     printf("cost: %d\n", costToBeRemoved);
-                            //     printf("cost: %d\n", newChangedAssignmentCost);
                             newChangedAssignmentCost += costToBeAdded1 + costToBeAdded2 + costToBeAdded3 - costToBeRemoved;
-                            // printf("costtt: %d\n", cost);
-                            // printf("cost!: %d\n\n\n", newChangedAssignmentCost);
                             if (newChangedAssignmentCost < changedAssignmentCost) {
                                 changedAssignmentCost = newChangedAssignmentCost;
                                 changedCostPerAgent[a1] = costToBeAdded1;
@@ -378,6 +439,8 @@ int main(){
                 k = -1;
             }
         }
+        t = clock() - t; 
+        double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds 
         printf("cost: %d\n", cost);
         printf("assignment: ");
         for (i = 0; i < m; i++)
@@ -385,7 +448,16 @@ int main(){
             printf("%d ", assignment[i]);
         }
         printf("\n");
-    }
+        printf("time: %f\n", time_taken);
+        fprintf(resultsFile, "cost: %d\n", cost);
+        fprintf(resultsFile, "assignment: ");
+        for (i = 0; i < m; i++)
+        {
+            fprintf(resultsFile, "%d ", assignment[i]);
+        }
+        fprintf(resultsFile, "\n");
+        fprintf(resultsFile, "time: %f\n", time_taken);
+    }    
+    fprintf(resultsFile, "################################################\n");
     fclose(myFile);
-    return 0;
 }
