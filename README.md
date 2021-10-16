@@ -18,3 +18,5 @@ Implemented metaheuristics methods are:
 
 To run the solver, run the "thesis.c" program.
 
+Problem files: http://people.brunel.ac.uk/~mastjjb/jeb/orlib/gapinfo.html
+
