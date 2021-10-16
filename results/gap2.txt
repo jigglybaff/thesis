@@ -1,102 +1,102 @@
 SIMULATED ANNEALING
-cost: 285
-assignment: 5 1 2 3 2 3 5 3 4 4 5 1 5 2 1 4 4 1 3 2 
-time: 0.031000
-cost: 271
-assignment: 2 4 4 1 3 2 2 2 1 2 5 3 4 1 4 1 5 3 5 5 
-time: 0.031000
-cost: 270
-assignment: 2 1 4 1 5 2 3 4 3 3 5 5 1 2 4 2 1 5 5 3 
-time: 0.031000
-cost: 269
-assignment: 1 3 3 2 3 1 5 1 5 4 5 3 4 4 3 2 4 1 2 5 
-time: 0.047000
-cost: 285
-assignment: 1 3 3 5 1 3 2 4 5 2 4 2 5 5 1 1 3 4 5 2 
-time: 0.032000
-################################################
-TABU SEARCH
-cost: 291
-assignment: 1 1 2 3 5 3 5 3 4 4 5 1 5 2 2 4 4 1 3 2 
-time: 0.062000
+cost: 295
+assignment: 5 4 2 3 5 3 5 3 4 5 4 1 1 1 2 2 4 1 3 2 
+time: 0.046000
 cost: 272
 assignment: 2 5 1 5 3 2 2 2 4 2 5 3 4 1 1 1 4 3 5 5 
-time: 0.063000
-cost: 294
-assignment: 4 1 3 5 5 2 4 3 2 4 5 4 1 2 1 1 1 4 5 5 
-time: 0.062000
+time: 0.032000
+cost: 260
+assignment: 2 1 3 1 5 2 3 5 4 3 5 5 1 2 4 2 1 3 5 4 
+time: 0.031000
 cost: 273
-assignment: 1 3 3 1 3 3 5 1 5 4 2 5 4 4 2 2 4 1 2 5 
-time: 0.047000
-cost: 267
-assignment: 4 2 3 1 1 3 2 4 5 2 1 2 5 5 4 1 3 3 5 5 
-time: 0.062000
-################################################
-ITERATED LOCAL SEARCH
-cost: 288
-assignment: 5 4 2 3 5 3 2 3 4 5 5 1 1 1 2 4 4 1 3 2 
-time: 1.125000
-cost: 297
-assignment: 2 3 4 1 3 2 2 5 4 2 5 3 3 2 1 1 4 1 5 5 
-time: 1.063000
-cost: 265
-assignment: 2 1 1 1 5 2 3 3 4 3 5 5 1 2 4 2 5 3 5 4 
-time: 1.312000
+assignment: 1 3 3 3 3 3 5 1 5 4 2 5 4 4 2 2 1 1 2 5 
+time: 0.031000
 cost: 278
-assignment: 1 3 3 5 3 3 5 4 5 3 2 5 4 4 2 2 1 1 2 1 
-time: 0.969000
-cost: 285
-assignment: 1 4 3 5 1 3 5 4 5 2 1 2 5 2 4 1 3 3 5 1 
-time: 1.000000
+assignment: 4 3 3 2 1 3 2 1 5 2 1 2 5 5 1 1 3 4 5 5 
+time: 0.031000
 ################################################
-GRASP
-cost: 295
-assignment: 5 4 2 3 2 3 1 4 4 4 5 5 1 2 3 2 4 1 3 5 
+TABU SEARCH
+cost: 302
+assignment: 4 4 1 3 2 3 5 3 4 4 2 5 1 2 2 1 4 1 3 5 
 time: 0.063000
-cost: 272
-assignment: 2 5 4 1 3 2 2 2 1 2 5 3 4 1 4 1 5 3 4 5 
-time: 0.062000
-cost: 265
-assignment: 2 1 1 1 5 2 3 3 4 3 5 5 1 2 4 2 5 3 5 4 
-time: 0.047000
-cost: 274
-assignment: 5 3 3 2 3 3 5 1 5 4 2 5 4 4 1 2 4 1 3 2 
-time: 0.063000
-cost: 276
-assignment: 4 2 3 5 1 3 2 4 5 2 1 2 5 5 1 1 3 3 5 1 
-time: 0.062000
-################################################
-THRESHOLD ACCEPTING
-cost: 277
-assignment: 5 4 2 3 2 3 5 3 4 4 5 1 1 1 2 4 5 1 3 2 
-time: 0.313000
 cost: 271
 assignment: 2 4 4 1 3 2 2 2 1 2 5 3 4 1 4 1 5 3 5 5 
-time: 0.328000
+time: 0.062000
 cost: 260
-assignment: 1 1 3 2 5 2 3 5 4 3 5 5 1 2 4 2 1 3 5 4 
-time: 0.312000
-cost: 270
-assignment: 1 3 3 3 3 1 5 1 5 4 2 5 4 4 3 2 4 1 2 5 
-time: 0.313000
+assignment: 2 1 3 1 5 2 3 5 4 3 5 5 1 2 4 2 1 3 5 4 
+time: 0.063000
+cost: 273
+assignment: 1 3 3 1 3 3 5 1 5 4 2 5 4 4 2 2 4 1 2 5 
+time: 0.062000
+cost: 278
+assignment: 4 2 3 5 1 3 4 1 5 2 1 2 5 5 1 1 2 4 5 3 
+time: 0.063000
+################################################
+ITERATED LOCAL SEARCH
+cost: 298
+assignment: 5 4 4 2 2 3 5 3 4 4 5 1 1 1 2 3 5 1 2 3 
+time: 1.062000
+cost: 275
+assignment: 2 5 1 5 3 2 2 2 5 2 5 3 4 1 1 1 4 3 4 5 
+time: 1.500000
+cost: 280
+assignment: 2 2 4 1 5 5 3 3 4 3 2 4 1 2 1 4 1 3 5 5 
+time: 1.016000
+cost: 280
+assignment: 5 3 3 2 3 1 4 1 5 4 2 5 4 4 2 5 1 1 2 3 
+time: 0.984000
 cost: 267
 assignment: 4 2 3 1 1 3 2 4 5 2 1 2 5 5 4 1 3 3 5 5 
+time: 0.985000
+################################################
+GRASP
+cost: 292
+assignment: 5 1 2 3 5 3 1 3 4 4 2 5 1 2 2 4 4 5 2 3 
+time: 0.062000
+cost: 301
+assignment: 2 5 1 3 3 2 4 2 5 2 5 2 4 2 1 1 1 4 5 3 
+time: 0.047000
+cost: 260
+assignment: 2 1 3 1 5 2 3 5 4 3 5 5 1 2 4 2 1 3 5 4 
+time: 0.047000
+cost: 275
+assignment: 1 3 3 3 3 3 5 4 5 5 2 3 4 4 2 2 1 1 2 1 
+time: 0.062000
+cost: 280
+assignment: 4 5 3 2 1 3 2 4 5 2 1 2 5 5 1 1 3 3 5 1 
+time: 0.047000
+################################################
+THRESHOLD ACCEPTING
+cost: 282
+assignment: 5 4 1 3 5 3 5 3 4 5 2 1 1 2 2 4 4 1 3 2 
 time: 0.328000
+cost: 272
+assignment: 2 5 1 5 3 2 2 2 4 2 5 3 4 1 1 1 4 3 5 5 
+time: 0.313000
+cost: 260
+assignment: 2 1 3 1 5 2 3 5 4 3 5 5 1 2 4 2 1 3 5 4 
+time: 0.312000
+cost: 269
+assignment: 1 3 3 2 3 1 5 1 5 4 5 3 4 4 3 2 4 1 2 5 
+time: 0.328000
+cost: 267
+assignment: 4 2 3 1 1 3 2 4 5 2 1 2 5 5 4 1 3 3 5 5 
+time: 0.313000
 ################################################
 VARIABLE NEIGHBORHOOD SEARCH
-cost: 312
-assignment: 5 4 1 3 4 3 5 4 1 4 2 2 1 1 2 5 4 1 3 3 
-time: 0.015000
-cost: 268
-assignment: 2 4 4 1 3 2 2 2 1 2 5 3 4 1 4 1 5 3 5 5 
-time: 0.016000
+cost: 294
+assignment: 1 4 1 3 5 3 5 3 2 4 5 2 1 2 2 4 5 1 2 3 
+time: 0.031000
 cost: 274
-assignment: 1 1 3 2 5 4 3 5 4 3 5 5 1 4 1 2 2 3 5 4 
+assignment: 2 4 1 3 4 2 2 2 5 5 5 3 3 1 1 1 4 3 5 5 
+time: 0.000000
+cost: 271
+assignment: 2 1 4 1 5 2 3 5 4 3 5 4 1 2 4 2 1 3 5 3 
 time: 0.016000
-cost: 274
-assignment: 1 3 3 1 3 3 5 1 5 2 2 5 4 4 2 2 4 1 3 5 
-time: 0.015000
-cost: 287
-assignment: 3 4 3 2 1 3 4 4 5 2 1 2 5 5 1 1 5 5 5 1 
-time: 0.016000
+cost: 232
+assignment: 4 3 3 3 3 1 4 1 1 4 2 5 4 4 2 2 1 5 2 3 
+time: 0.031000
+cost: 277
+assignment: 1 5 3 2 1 3 4 4 5 2 1 2 5 5 4 1 3 4 5 1 
+time: 0.000000
 ################################################
